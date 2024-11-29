@@ -9,6 +9,7 @@ let r = 100;
 let muncherX = 0;
 let muncherY = 0;
 let rotation = 0;
+
 function setup() {
   createCanvas(800, 600);
   red = color(255, 55, 31);
@@ -21,44 +22,44 @@ rotate(r);
   //main body part
   push();
   fill(240,190,0);
-  ellipse(x,y,20);
+  ellipse(0,0,20);
   pop();
 
   //teeth
   push();
   fill(255);
   beginShape();
-  vertex(x-9,y-4);
-  bezierVertex(x-5,y-12,x+5,y-12,x+9,y-4);
+  vertex(-9,-4);
+  bezierVertex(-5,-12,5,-12,9,-4);
   endShape();
   pop();
-  line(x-9,y-4,x+9,y-4);
-  line(x-7,y-4,x-4,y-9);
-  line(x-3,y-4,x-4,y-9);
-  line(x-3,y-4,x-1,y-9);
-  line(x+2,y-4,x,y-9);
-  line(x+2,y-4,x+4,y-9);
-  line(x+7,y-4,x+4,y-9);
+  line(-9,-4,9,-4);
+  line(-7,-4,-4,-9);
+  line(-3,-4,-4,-9);
+  line(-3,-4,-1,-9);
+  line(2,-4,0,-9);
+  line(2,-4,4,-9);
+  line(7,-4,4,-9);
 
   //antenna
   push();
   fill(240,190,0);
   beginShape();
-  vertex(x-2,y+6);
-  bezierVertex(x-1,y+20,x+1,y+20,x+2,y+6);
+  vertex(-2,6);
+  bezierVertex(-1,20,1,20,2,6);
   endShape();
-  ellipse(x,y+15,6);
+  ellipse(0,15,6);
   pop();
 
   //eyes
   push();
-  translate(x-6,y-1);
+  translate(-6,-1);
   rotate(0.6);
   ellipse(0,0,6,10);
   pop();
 
   push();
-  translate(x+6,y-1);
+  translate(6,-1);
   rotate(-0.6);
   ellipse(0,0,6,10);
   pop();
@@ -66,20 +67,20 @@ rotate(r);
   //irises
   push();
   fill(0);
-  translate(x-6,y-2);
+  translate(-6,-2);
   ellipse(0,0,3,4);
   pop();
 
   push();
   fill(0);
-  translate(x+6,y-2);
+  translate(6,-2);
   ellipse(0,0,3,4);
   pop();
 }
 
-function foods(){
+const foods = ["🌭","🍔","🍞","🥧"];
 
-}
+
 
 
 function draw() {
@@ -108,11 +109,12 @@ function startScreen() {
 function gameScreen() {
   //background(255, 140, 100);
   background(120,120,120);
+
+  textSize(40);
+  text(foods.join(""),20,100);
   
   push();
-  translate(100,150);
   muncherBall(muncherX,muncherY,rotation);
-  rotate(rotation);
   pop();
 }
 
