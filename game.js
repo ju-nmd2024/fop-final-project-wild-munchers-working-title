@@ -11,29 +11,27 @@ let score = 0;
 // Paddle variables
 let paddleX = 350;
 let paddleY = 570;
-let paddleWidth = 95;
-let paddleHeight =20;
+let paddleWidth = 125;
+let paddleHeight =10;
 let paddleSpeed = 2;
 
 
 // Ball position variables
 let ballAcceleration = 0.2;
 let ballVelocityY = 0.2;
-let muncherX = 400;
-let muncherY = 550;
+let muncherX = 150;
+let muncherY = 200;
 let rotation = 0;
+let speed = 0;
 
 function setup() {
   createCanvas(800, 600);
   red = color(255, 55, 31);
 }
 
-
-
-function muncherBall(x, y, r) {
-  push();
-  translate(x, y);
-  rotate(r);
+function muncherBall(x,y,r){
+translate(x,y);
+rotate(r);
 
   // Main body part
   push();
@@ -100,12 +98,13 @@ function muncherBall(x, y, r) {
   push();
   noStroke(); 
   fill(0);
-  translate(6, -2);
-  ellipse(0, 0, 3, 4);
-  pop();
-
+  translate(6,-2);
+  ellipse(0,0,3,4);
   pop();
 }
+
+const foods = ["🌭","🍔","🍞","🥧"];
+
 
 
 function paddle(){
@@ -139,37 +138,26 @@ function startScreen() {
   background(0);
 
   //Start button
+  push();
   stroke(250);
   strokeWeight(3);
   fill(red);
   textSize(40);
-  text('Click anywhere', 412, 330);
+  text('HERE', 412, 330);
 }
 
 function gameScreen() {
   clear(); 
   background(120,120,120);
 
-  textSize(40);
-  text(foods.join(""),20,100);
-  
   push();
   muncherBall(muncherX,muncherY,rotation);
   pop();
   paddle();
 
-  if (keyIsDown(LEFT_ARROW)) {
-    paddleX -= 4; //Moves to the left
-}
-
-  if (keyIsDown(RIGHT_ARROW)) {
-  paddleX += 4; //Moves to the left
-}
-
-  paddleX = constrain(paddleX, 0, 705);
-
   // Ball's speed
-  ballVelocityY = ballVelocityY + ballAcceleration;
+  //ballVelocityY = ballVelocityY + ballAcceleration;
+  speed=3;
 
 
 }
@@ -178,7 +166,14 @@ function resultScreen() {
   background(255, 140, 0);
 }
 
+
+
+
+/*
 function mousePressed() {
   gameState = 'game';
+  if (gameState === 'result'){
+    gamestate = 'game';
+  }
 }
-
+  */
