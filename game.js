@@ -1,5 +1,5 @@
 let red;
-let gameState = 'game';
+let gameState = 'start';
 
 let x = 100;
 let y = 100;
@@ -8,25 +8,26 @@ let r = 100;
 // Paddle variables
 let paddleX = 350;
 let paddleY = 570;
-let paddleWidth = 95;
-let paddleHeight =20;
+let paddleWidth = 125;
+let paddleHeight =10;
 let paddleSpeed = 2;
 
 
 // Ball position variables
-let ballAcceleration = 0.2;
-let ballVelocityY = 0.2;
-let muncherX = 150;
-let muncherY = 200;
+//let ballAcceleration = 0.2;
+//let ballVelocityY = 0.2;
+let muncherX = 400;
+let muncherY = 550;
 let rotation = 0;
+let speed = 0;
 
 function setup() {
   createCanvas(800, 600);
   red = color(255, 55, 31);
 }
 
-
 function muncherBall(x,y,r){
+push();
 translate(x,y);
 rotate(r);
 
@@ -87,11 +88,8 @@ rotate(r);
   translate(6,-2);
   ellipse(0,0,3,4);
   pop();
+pop();
 }
-
-const foods = ["🌭","🍔","🍞","🥧"];
-
-
 
 function paddle(){
   fill(255);
@@ -119,27 +117,31 @@ function startScreen() {
   background(0);
 
   //Start button
+  push();
   stroke(250);
   strokeWeight(3);
   fill(red);
   textSize(40);
   text('HERE', 412, 330);
+  pop();
 }
 
 function gameScreen() {
   //background(255, 140, 100);
   background(120,120,120);
 
-  textSize(40);
-  text(foods.join(""),20,100);
-  
   push();
   muncherBall(muncherX,muncherY,rotation);
   pop();
   paddle();
+  paddleX=mouseX-60;
+  muncherX=muncherX+Math.cos(rotation-1.57) * speed;
+  muncherY=muncherY+Math.sin(rotation-1.5) * speed;
+  
 
   // Ball's speed
-  ballVelocityY = ballVelocityY + ballAcceleration;
+  //ballVelocityY = ballVelocityY + ballAcceleration;
+  speed=3;
 
 }
 
@@ -150,8 +152,10 @@ function resultScreen() {
 
 
 
-/*
+
 function mousePressed() {
   gameState = 'game';
+  if (gameState === 'result'){
+    gamestate = 'game';
+  }
 }
-  */
