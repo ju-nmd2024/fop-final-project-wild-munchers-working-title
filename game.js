@@ -106,10 +106,7 @@ function paddle(){
   pop();
 }
 
-
 function draw() {
-  translate(0,0);
-  background(255, 140, 0);
   if (gameState === 'start') {
     startScreen();
   } else if (gameState === "game") {
@@ -156,6 +153,12 @@ function gameScreen() {
   text("Lives:", 20, 30); 
   text(lives, 80, 30); 
 
+  stroke(0);
+  textSize(20);
+  fill(255);
+  text("Score:", 150, 30); 
+  text(score, 210, 30); 
+
 
   if (keyIsDown(LEFT_ARROW)){
     paddleX -= 4.5; //Moves to the left
@@ -180,7 +183,6 @@ function gameScreen() {
     ballVelocityY = - ballVelocityY;
     ballVelocityY = 1.2 * ballVelocityY;
   }
-
   muncherY += ballVelocityY;
 
   //Bounces(paddle)
@@ -192,18 +194,27 @@ if (
   ballVelocityY = -ballVelocityY; 
 }
 
+
+//If no more food remains, transition to result screen
+if (foods.length === 0) {
+  gameState = 'result';
+}
+
+
 if (muncherY >= bottomLimit) {
-  lives--; // Decrease lives
+  lives--; //Decrease lives
   if (lives <= 0) {
   gameState = 'result'; 
 } else {
-  // Reset ball position and velocity after losing a life
+  //Reset ball position and velocity after losing a life
   muncherX = 400;
   muncherY = 550;
   ballVelocityY = -4;
-  ballVelocityX = 2;
+  ballVelocityX = 2;}
+
+
 }
-}
+
 }
 
 function resultScreen() {
@@ -245,4 +256,3 @@ function mousePressed() {
     gameState = 'start';
   }
 }
-
