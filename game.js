@@ -7,6 +7,8 @@ let r = 100;
 
 
 let score = 0;
+let lives = 3;
+
 
 
 // Paddle variables
@@ -31,77 +33,68 @@ function setup() {
 }
 
 function muncherBall(x,y,r){
+push();
 translate(x,y);
 rotate(r);
 
-  // Main body part
+  //main body part
   push();
-  stroke(0);
-  strokeWeight(1);
-  fill(240, 190, 0);
-  ellipse(0, 0, 20);
+  fill(240,190,0);
+  ellipse(0,0,20);
   pop();
 
-  // Teeth
+  //teeth
   push();
-  stroke(0); 
-  strokeWeight(0.5); 
   fill(255);
   beginShape();
-  vertex(-9, -4);
-  bezierVertex(-5, -12, 5, -12, 9, -4);
+  vertex(-9,-4);
+  bezierVertex(-5,-12,5,-12,9,-4);
   endShape();
-  line(-9, -4, 9, -4);
-  line(-7, -4, -4, -9);
-  line(-3, -4, -4, -9);
-  line(-3, -4, -1, -9);
-  line(2, -4, 0, -9);
-  line(2, -4, 4, -9);
-  line(7, -4, 4, -9);
   pop();
+  line(-9,-4,9,-4);
+  line(-7,-4,-4,-9);
+  line(-3,-4,-4,-9);
+  line(-3,-4,-1,-9);
+  line(2,-4,0,-9);
+  line(2,-4,4,-9);
+  line(7,-4,4,-9);
 
-  // Antenna
+  //antenna
   push();
-  stroke(0);
-  strokeWeight(1); 
-  fill(240, 190, 0);
+  fill(240,190,0);
   beginShape();
-  vertex(-2, 6);
-  bezierVertex(-1, 20, 1, 20, 2, 6);
+  vertex(-2,6);
+  bezierVertex(-1,20,1,20,2,6);
   endShape();
-  ellipse(0, 15, 6);
+  ellipse(0,15,6);
   pop();
 
-  // Eyes
-  stroke(0);
-  strokeWeight(0.5);
-  fill(255);
+  //eyes
   push();
-  translate(-6, -1);
+  translate(-6,-1);
   rotate(0.6);
-  ellipse(0, 0, 6, 10);
+  ellipse(0,0,6,10);
   pop();
 
   push();
-  translate(6, -1);
+  translate(6,-1);
   rotate(-0.6);
-  ellipse(0, 0, 6, 10);
+  ellipse(0,0,6,10);
   pop();
 
-  // Irises
+  //irises
   push();
-  noStroke(); 
   fill(0);
-  translate(-6, -2);
-  ellipse(0, 0, 3, 4);
+  translate(-6,-2);
+  ellipse(0,0,3,4);
   pop();
 
   push();
-  noStroke(); 
   fill(0);
   translate(6,-2);
   ellipse(0,0,3,4);
   pop();
+pop();
 }
 
 function paddle(){
@@ -113,10 +106,7 @@ function paddle(){
   pop();
 }
 
-
 function draw() {
-  translate(0,0);
-  background(255, 140, 0);
   if (gameState === 'start') {
     startScreen();
   } else if (gameState === "game") {
@@ -142,38 +132,88 @@ function startScreen() {
   strokeWeight(3);
   fill(red);
   textSize(40);
-  text('CLICK ANYWHERE', Width/2, 330);
+  text('CLICK ANYWHERE TO START', width/2, 330);
   pop();
 }
 
 function gameScreen() {
   background(120,120,120);
- 
+
+  textSize(40);
+  text(foods.join(""),20,100);
+
   push();
   muncherBall(muncherX,muncherY,rotation);
   pop();
   paddle();
 
-  //the brick wall
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 100,45,15);
-    }
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 117,45,15);
-    }
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 134,45,15);
-    }
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 151,45,15);
-    }
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 168,45,15);
-    }
-  for (let amount = 0; amount < 17; amount++){
-    rect(1.5 + amount * 47, 185,45,15);
+  stroke(0);
+  textSize(20);
+  fill(255);
+  text("Lives:", 20, 30); 
+  text(lives, 80, 30); 
+
+  stroke(0);
+  textSize(20);
+  fill(255);
+  text("Score:", 150, 30); 
+  text(score, 210, 30); 
+
+
+  if (keyIsDown(LEFT_ARROW)){
+    paddleX -= 4.5; //Moves to the left
+  }
+
+  if (keyIsDown(RIGHT_ARROW)) {
+    paddleX += 4.5; //Moves to the right
+  }
+
+  //limits the paddle to the borders
+  paddleX = constrain(paddleX, 0, 680);
+
+  //Bounces(screen)
+  if(muncherX >= 790 || muncherX <= 10){
+    ballVelocityX = - ballVelocityX;
+    ballVelocityX = 1.2*ballVelocityX;
     }
 
+    muncherX += ballVelocityX;
+
+  if (muncherY <= 10){
+    ballVelocityY = - ballVelocityY;
+    ballVelocityY = 1.2 * ballVelocityY;
+  }
+  muncherY += ballVelocityY;
+
+  //Bounces(paddle)
+if (
+  muncherY >= paddleY - 10 && 
+  muncherX >= paddleX && 
+  muncherX <= paddleX + paddleWidth 
+) {
+  ballVelocityY = -ballVelocityY; 
+}
+
+
+//If no more food remains, transition to result screen
+if (foods.length === 0) {
+  gameState = 'result';
+}
+
+
+if (muncherY >= bottomLimit) {
+  lives--; //Decrease lives
+  if (lives <= 0) {
+  gameState = 'result'; 
+} else {
+  //Reset ball position and velocity after losing a life
+  muncherX = 400;
+  muncherY = 550;
+  ballVelocityY = -4;
+  ballVelocityX = 2;}
+
+
+}
 
   if (keyIsDown(LEFT_ARROW)){
     paddleX -= 4.5; //Moves to the left
@@ -238,8 +278,23 @@ function resultScreen() {
 
 
 function mousePressed() {
-  gameState = 'game';
-  if (gameState === 'result'){
-    gamestate = 'game';
+  if (gameState === 'start') {
+    //Restart to original position
+    muncherX = 400;
+    muncherY = 550;
+    ballVelocityY = -4; 
+    ballVelocityX = 2; 
+    lives = 3; 
+    score = 0; 
+    gameState = 'game';
+  } else if (gameState === 'result') {
+    //Restart to original position
+    muncherX = 400;
+    muncherY = 550;
+    ballVelocityY = -4; 
+    ballVelocityX = 2; 
+    lives = 3; 
+    score = 0; 
+    gameState = 'start';
   }
 }
