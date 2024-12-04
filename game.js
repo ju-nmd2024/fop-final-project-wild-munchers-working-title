@@ -1,28 +1,29 @@
 let red;
-let gameState = 'start';
+let gameState = 'game';
 
 let x = 100;
 let y = 100;
 let r = 100;
 
-const foods = ["🌭","🍔","🍞","🥧"];
+
 let score = 0;
+
 
 // Paddle variables
 let paddleX = 350;
 let paddleY = 570;
 let paddleWidth = 125;
 let paddleHeight =10;
-let paddleSpeed = 2;
 
 
 // Ball position variables
+const bottomLimit = 580;
 let ballAcceleration = 0.2;
-let ballVelocityY = 0.2;
-let muncherX = 150;
-let muncherY = 200;
+let ballVelocityY = -4;
+let ballVelocityX = 2;
+let muncherX = 400;
+let muncherY = 550;
 let rotation = 0;
-let speed = 0;
 
 function setup() {
   createCanvas(800, 600);
@@ -103,10 +104,6 @@ rotate(r);
   pop();
 }
 
-const foods = ["🌭","🍔","🍞","🥧"];
-
-
-
 function paddle(){
   push();
   stroke(0);
@@ -114,10 +111,6 @@ function paddle(){
   fill(50,60,170);
   rect(paddleX, paddleY, paddleWidth, paddleHeight);
   pop();
-}
-
-function pointsCounter(){
-
 }
 
 
@@ -135,7 +128,13 @@ function draw() {
 
 
 function startScreen() {
-  background(0);
+  background(255);
+
+  muncherX = 400;
+  muncherY = 300;
+  muncherSpeedX = 3;
+  muncherSpeedY = -3;
+  paddleX = 350;
 
   //Start button
   push();
@@ -143,37 +142,104 @@ function startScreen() {
   strokeWeight(3);
   fill(red);
   textSize(40);
-  text('HERE', 412, 330);
+  text('CLICK ANYWHERE', Width/2, 330);
+  pop();
 }
 
 function gameScreen() {
-  clear(); 
   background(120,120,120);
-
+ 
   push();
   muncherBall(muncherX,muncherY,rotation);
   pop();
   paddle();
 
-  // Ball's speed
-  //ballVelocityY = ballVelocityY + ballAcceleration;
-  speed=3;
+  //the brick wall
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 100,45,15);
+    }
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 117,45,15);
+    }
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 134,45,15);
+    }
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 151,45,15);
+    }
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 168,45,15);
+    }
+  for (let amount = 0; amount < 17; amount++){
+    rect(1.5 + amount * 47, 185,45,15);
+    }
 
 
+  if (keyIsDown(LEFT_ARROW)){
+    paddleX -= 4.5; //Moves to the left
+  }
+
+  if (keyIsDown(RIGHT_ARROW)) {
+    paddleX += 4.5; //Moves to the right
+  }
+
+  //limits the paddle to the borders
+  paddleX = constrain(paddleX, 0, 705);
+
+  //Bounces(screen)
+  if(muncherX >= 790 || muncherX <= 10){
+    ballVelocityX = - ballVelocityX;
+    ballVelocityX = 1.2*ballVelocityX;
+    }
+
+    muncherX += ballVelocityX;
+
+  if (muncherY <= 10){
+    ballVelocityY = - ballVelocityY;
+    ballVelocityY = 1.2 * ballVelocityY;
+  }
+
+  muncherY += ballVelocityY;
+
+  //Bounces(paddle)
+if (
+  muncherY >= paddleY - 10 && 
+  muncherX >= paddleX && 
+  muncherX <= paddleX + paddleWidth 
+) {
+  ballVelocityY = -ballVelocityY; 
+  //muncherY = paddleY - 10; // Adjust position to avoid overlap
+}
+
+if (muncherY >= bottomLimit) {
+  gameState = 'result'; 
+}
+}
+
+function pointsCounter(){
 }
 
 function resultScreen() {
-  background(255, 140, 0);
+  clear();
+  push();
+  background(0);
+  stroke(250);
+  strokeWeight(3);
+  fill(red);
+  textSize(40);
+  text('GAME OVER', width / 2 , 330);
+  pop();
+  muncherX = 400;
+  muncherY = 550;
+  paddleX = 350;
+  ballVelocityY = -4;
+  ballVelocityX = 2;
 }
 
 
-
-
-/*
 function mousePressed() {
   gameState = 'game';
   if (gameState === 'result'){
     gamestate = 'game';
   }
 }
-  */
