@@ -139,8 +139,8 @@ function startScreen() {
 function gameScreen() {
   background(120,120,120);
 
-  textSize(40);
-  text(foods.join(""),20,100);
+  //textSize(40);
+  //text(foods.join(""),20,100);
 
   push();
   muncherBall(muncherX,muncherY,rotation);
@@ -196,13 +196,43 @@ if (
 
 
 //If no more food remains, transition to result screen
-if (foods.length === 0) {
-  gameState = 'result';
-}
+//if (foods.length === 0) {
+//  gameState = 'result';
+//}
+/*
+  // Collision with food
+  for (let food of foods) {
+    if (!food.collected && dist(muncherX, muncherY, food.x, food.y) < 25) {
+      food.collected = true;
+      score += 10;
+      ballVelocityY *= -1; // Bounce after hitting a food
+    }
+  }
+*/
 
+//the brick wall
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 100,45,15);
+  }
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 117,45,15);
+  }
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 134,45,15);
+  }
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 151,45,15);
+  }
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 168,45,15);
+  }
+for (let amount = 0; amount < 17; amount++){
+  rect(1.5 + amount * 47, 185,45,15);
+  }
 
 if (muncherY >= bottomLimit) {
   lives--; //Decrease lives
+  console.log("hit bottom");
   if (lives <= 0) {
   gameState = 'result'; 
 } else {
@@ -211,9 +241,8 @@ if (muncherY >= bottomLimit) {
   muncherY = 550;
   ballVelocityY = -4;
   ballVelocityX = 2;}
-
-
 }
+
 
   if (keyIsDown(LEFT_ARROW)){
     paddleX -= 4.5; //Moves to the left
@@ -248,12 +277,9 @@ if (
   muncherX <= paddleX + paddleWidth 
 ) {
   ballVelocityY = -ballVelocityY; 
-  //muncherY = paddleY - 10; // Adjust position to avoid overlap
+  muncherY = paddleY - 10; // Adjust position to avoid overlap
 }
 
-if (muncherY >= bottomLimit) {
-  gameState = 'result'; 
-}
 }
 
 function pointsCounter(){
