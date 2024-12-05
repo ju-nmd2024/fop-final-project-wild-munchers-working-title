@@ -5,11 +5,8 @@ let x = 100;
 let y = 100;
 let r = 100;
 
-
 let score = 0;
 let lives = 3;
-
-
 
 // Paddle variables
 let paddleX = 350;
@@ -21,11 +18,21 @@ let paddleHeight =10;
 // Ball position variables
 const bottomLimit = 580;
 let ballAcceleration = 0.2;
-let ballVelocityY = -4;
+let ballVelocityY = -3;
 let ballVelocityX = 2;
 let muncherX = 400;
 let muncherY = 550;
 let rotation = 0;
+
+//food array or simple object
+
+const foods = {
+  width: 45,
+  height: 15,
+  row: {r1: 100, r2: 117, r3: 134, r4: 151, r5: 168, r6: 185,},
+  spacing: 47,
+};
+
 
 function setup() {
   createCanvas(800, 600);
@@ -132,15 +139,13 @@ function startScreen() {
   strokeWeight(3);
   fill(red);
   textSize(40);
-  text('CLICK ANYWHERE TO START', width/2, 330);
+  textAlign(CENTER);
+  text('CLICK ANYWHERE TO START', width/2-195, 330,380);
   pop();
 }
 
 function gameScreen() {
   background(120,120,120);
-
-  //textSize(40);
-  //text(foods.join(""),20,100);
 
   push();
   muncherBall(muncherX,muncherY,rotation);
@@ -197,42 +202,33 @@ if (
 
 //If no more food remains, transition to result screen
 //if (foods.length === 0) {
-//  gameState = 'result';
-//}
-/*
-  // Collision with food
-  for (let food of foods) {
-    if (!food.collected && dist(muncherX, muncherY, food.x, food.y) < 25) {
-      food.collected = true;
-      score += 10;
-      ballVelocityY *= -1; // Bounce after hitting a food
-    }
-  }
-*/
+ // gameState = 'result';}
 
-//the brick wall
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 100,45,15);
-  }
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 117,45,15);
-  }
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 134,45,15);
-  }
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 151,45,15);
-  }
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 168,45,15);
-  }
-for (let amount = 0; amount < 17; amount++){
-  rect(1.5 + amount * 47, 185,45,15);
-  }
+ for (let amount = 0; amount < 17; amount++){
+  push();
+  fill(200,80,80);
+  rect(1.5 + amount * foods.spacing, foods.row.r1,foods.width,foods.height);
+  rect(1.5 + amount * foods.spacing, foods.row.r2,foods.width,foods.height);
+  rect(1.5 + amount * foods.spacing, foods.row.r3,foods.width,foods.height);
+  rect(1.5 + amount * foods.spacing, foods.row.r4,foods.width,foods.height);
+  rect(1.5 + amount * foods.spacing, foods.row.r5,foods.width,foods.height);
+  rect(1.5 + amount * foods.spacing, foods.row.r6,foods.width,foods.height);
+  pop();
+}
+
+/*
+Was gonna code collision between ball and food,
+had to stop due to it being too late and couldn't
+risk getting caught still awake late at night.
+*/
+// Collision with food
+
+//if (dist(muncherX,muncherY,)) {
+  //console.log("muncher hit food");
+//}
 
 if (muncherY >= bottomLimit) {
   lives--; //Decrease lives
-  console.log("hit bottom");
   if (lives <= 0) {
   gameState = 'result'; 
 } else {
@@ -240,9 +236,10 @@ if (muncherY >= bottomLimit) {
   muncherX = 400;
   muncherY = 550;
   ballVelocityY = -4;
-  ballVelocityX = 2;}
+  ballVelocityX = 2;
 }
 
+}
 
   if (keyIsDown(LEFT_ARROW)){
     paddleX -= 4.5; //Moves to the left
@@ -277,8 +274,9 @@ if (
   muncherX <= paddleX + paddleWidth 
 ) {
   ballVelocityY = -ballVelocityY; 
-  muncherY = paddleY - 10; // Adjust position to avoid overlap
+  //muncherY = paddleY - 10; // Adjust position to avoid overlap
 }
+
 
 }
 
@@ -293,8 +291,15 @@ function resultScreen() {
   strokeWeight(3);
   fill(red);
   textSize(40);
-  text('GAME OVER', width / 2 , 330);
+  text('GAME OVER',width / 2-122 , 330);
   pop();
+  push();
+  fill(255);
+  textSize(30);
+  text("Highscore:", width / 2-65, 380);
+  text(score, width / 2, 420);
+  pop();
+
   muncherX = 400;
   muncherY = 550;
   paddleX = 350;
