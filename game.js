@@ -24,20 +24,49 @@ let muncherX = 400;
 let muncherY = 550;
 let rotation = 0;
 
-//food array or simple object
-const foods = {
-  width: 45,
-  height: 15,
-  row: {r1: 100, r2: 117, r3: 134, r4: 151, r5: 168, r6: 185,},
-  spacing: 47,
-};
+//food OOP
+class Brick {
+  constructor(x,y, width, height){
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
 
-let muncher; 
+  draw() {
+    push();
+    fill(200,80,80);
+    rect(this.x,this.y,this.width,this.height);
+    pop();
+  }
+}
+
+let bricks = [];
+
+const foodsX = [1.5,48.5,95.5,142.5,189.5,236.5,283.5,330.5,377.5,424.5,471.5,518.5,565.5,612.5,659.5,706.5,753.5];
+const foodsY = [100,117,134,151,168,185];
+console.log(foodsX.length);
+
+let food1 = new Brick(foodsX[0],100);
+let food2 = new Brick(foodsX[1],100);
+let food3 = new Brick(95.5,100);
+
 
 function setup() {
   createCanvas(800, 600);
   red = color(255, 55, 31);
   muncher = new MuncherBall(400, 550, 0);
+
+  //wall of bricks
+for (let i = 0; i < 18; i++) {
+  const bricksX = 0 + i * (45+2);
+  for (let j = 0; j < 6; j++){
+    const bricksY = 100 + j * (15+2);
+    const newBrick = new Brick(bricksX,bricksY, 45, 15);
+    newBrick.draw();
+  }
+}
+
 }
 
 class MuncherBall {
@@ -108,6 +137,8 @@ class MuncherBall {
     pop();
   }
 }
+
+let muncher; 
 
 function paddle(){
   push();
@@ -200,24 +231,22 @@ if (
   ballVelocityY = - ballVelocityY; 
 }
 
+// Brick collision
+for (let i = bricks.length - 1; i >= 0; i--) {
+  let brick = bricks[i];
+  brick.draw();
+  if (dist(muncher.x, muncher.y, brick.x + brick.width / 2, brick.y + brick.height / 2) < 15) {
+    bricks.splice(i, 1);
+    ballVelocityY = -ballVelocityY;
+    score++;
+  }
+}
+
 
 //If no more food remains, transition to result screen
 //if (foods.length === 0) {
 // gameState = 'result';}
 
- for (let amount = 0; amount < 17; amount++){
-  push();
-  fill(200,80,80);
-  rect(1.5 + amount * foods.spacing, foods.row.r1,foods.width,foods.height);
-  rect(1.5 + amount * foods.spacing, foods.row.r2,foods.width,foods.height);
-  rect(1.5 + amount * foods.spacing, foods.row.r3,foods.width,foods.height);
-  rect(1.5 + amount * foods.spacing, foods.row.r4,foods.width,foods.height);
-  rect(1.5 + amount * foods.spacing, foods.row.r5,foods.width,foods.height);
-  rect(1.5 + amount * foods.spacing, foods.row.r6,foods.width,foods.height);
-  pop();
-}
-
-// Collision with food
 
 if (muncher.y >= bottomLimit) {
   lives--; //Decrease lives
@@ -266,7 +295,6 @@ if (
   muncher.x <= paddleX + paddleWidth 
 ) {
   ballVelocityY = -ballVelocityY; 
-  //muncherY = paddleY - 10; // Adjust position to avoid overlap
 }}
 
 function resultScreen() {
@@ -295,7 +323,6 @@ function resultScreen() {
    if (score > highScore) {
     highScore = score;
   }
-
 }
 
 function mousePressed() {
