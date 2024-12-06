@@ -1,5 +1,5 @@
 let red;
-let gameState = 'result';
+let gameState = 'start';
 
 let x = 100;
 let y = 100;
@@ -12,12 +12,11 @@ let lives = 3;
 //Paddle variables
 let paddleX = 350;
 let paddleY = 570;
-let paddleWidth = 125;
+let paddleWidth = 225;
 let paddleHeight =10;
 
 //Ball position variables
 const bottomLimit = 580;
-let ballAcceleration = 0.2;
 let ballVelocityY = -2;
 let ballVelocityX = 2;
 let muncherX = 400;
@@ -40,7 +39,6 @@ class Brick {
     pop();
   }
 }
-
 let bricks = [];
 
 const foodsX = [1.5,48.5,95.5,142.5,189.5,236.5,283.5,330.5,377.5,424.5,471.5,518.5,565.5,612.5,659.5,706.5,753.5];
@@ -53,17 +51,18 @@ let food3 = new Brick(95.5,100);
 
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(850, 600);
   red = color(255, 55, 31);
+  red2 = color(25, 155, 31);
   muncher = new MuncherBall(400, 550, 0);
 
   //wall of bricks
-for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 18; i++) {
   const bricksX = 0 + i * (45+2);
   for (let j = 0; j < 6; j++){
     const bricksY = 100 + j * (15+2);
     const newBrick = new Brick(bricksX,bricksY, 45, 15);
-    newBrick.draw();
+    bricks.push(newBrick); 
   }
 }
 
@@ -160,7 +159,7 @@ function draw() {
 }
 
 function startScreen() {
-  background(255);
+  background(255,255,160);
 
   muncherX = 400;
   muncherY = 300;
@@ -168,15 +167,14 @@ function startScreen() {
   muncherSpeedY = -3;
   paddleX = 350;
 
-  //Start button
-  push();
-  stroke(250);
-  strokeWeight(3);
-  fill(red);
-  textSize(40);
-  textAlign(CENTER);
-  text('CLICK ANYWHERE TO START', width/2-195, 330,380);
-  pop();
+push();
+stroke(red2);
+strokeWeight(3);
+fill(red);
+textSize(25);
+text('BRICK MUNCHER', 280, 300, 380);
+pop();
+
 }
 
 function gameScreen() {
@@ -188,14 +186,14 @@ function gameScreen() {
   stroke(0);
   textSize(20);
   fill(255);
-  text("Lives:", 20, 30); 
-  text(lives, 80, 30); 
+  text("Lives:", 30, 30); 
+  text(lives, 75, 30); 
 
-  text("Score:", 150, 30); 
+  text("Score:", 165, 30); 
   text(score, 210, 30); 
 
   text("Highest Score:", 360, 30); 
-  text(highScore, 480, 30); 
+  text(highScore, 445, 30); 
 
 
   if (keyIsDown(LEFT_ARROW)){
@@ -207,18 +205,18 @@ function gameScreen() {
   }
 
   //limits the paddle to the borders
-  paddleX = constrain(paddleX, 0, 680);
+  paddleX = constrain(paddleX, 0, 630);
 
   //Bounces(screen)
-  if(muncher.x >= 790 || muncher.x <= 10){
+  if(muncher.x >= 830 || muncher.x <= 10){
     ballVelocityX = - ballVelocityX;
-    ballVelocityX = 1.2*ballVelocityX;
+    ballVelocityX = 1.1 * ballVelocityX;
     }
   muncher.x += ballVelocityX;
 
-  if (muncherY <= 10){
+  if (muncher.y <= 10){
     ballVelocityY = - ballVelocityY;
-    ballVelocityY = 1.2 * ballVelocityY;
+    ballVelocityY = 1.1 * ballVelocityY;
   }
   muncher.y += ballVelocityY;
 
@@ -231,21 +229,29 @@ if (
   ballVelocityY = - ballVelocityY; 
 }
 
-// Brick collision
+ballVelocityY = constrain(ballVelocityY, -4, 4);
+ballVelocityX = constrain(ballVelocityX, -4, 4);
+
+//Brick collision
 for (let i = bricks.length - 1; i >= 0; i--) {
   let brick = bricks[i];
   brick.draw();
-  if (dist(muncher.x, muncher.y, brick.x + brick.width / 2, brick.y + brick.height / 2) < 15) {
-    bricks.splice(i, 1);
-    ballVelocityY = -ballVelocityY;
+  
+  //Check for collision
+  if (muncher.x + 10 > brick.x && muncher.x - 10 < brick.x + brick.width && 
+      muncher.y + 10 > brick.y && muncher.y - 10 < brick.y + brick.height) {
+    
+    bricks.splice(i, 1); //Remove the brick from the array
     score++;
+
+    //Bounce the ball depending on the side of the brick it hits
+    if (muncher.x < brick.x || muncher.x > brick.x + brick.width) {
+      ballVelocityX = -ballVelocityX; //Reverse X direction
+    } else {
+      ballVelocityY = -ballVelocityY; //Reverse Y direction
+    }
   }
 }
-
-
-//If no more food remains, transition to result screen
-//if (foods.length === 0) {
-// gameState = 'result';}
 
 
 if (muncher.y >= bottomLimit) {
@@ -273,44 +279,25 @@ if (muncher.y >= bottomLimit) {
   //limits the paddle to the borders
   paddleX = constrain(paddleX, 0, 705);
 
-  //Bounces(screen)
-  if(muncher.x >= 790 || muncher.x <= 10){
-    ballVelocityX = - ballVelocityX;
-    ballVelocityX = 1.2*ballVelocityX;
-    }
-
-    muncher.x += ballVelocityX;
-
-  if (muncher.y <= 10){
-    ballVelocityY = - ballVelocityY;
-    ballVelocityY = 1.2 * ballVelocityY;
-  }
-
   muncher.y += ballVelocityY;
-
-  //Bounces(paddle)
-if (
-  muncher.y >= paddleY - 10 && 
-  muncher.x >= paddleX && 
-  muncher.x <= paddleX + paddleWidth 
-) {
-  ballVelocityY = -ballVelocityY; 
-}}
+}
 
 function resultScreen() {
   clear();
   background(0);
-  fill(red);
-  textSize(40);
-  textAlign(CENTER, CENTER);
-  text('GAME OVER', width / 2, height / 3);
-
   fill(255);
+  textSize(50);
+  textAlign(CENTER);
+  text("Game Over!", 400, 200);
+  textSize(30);
+  if (score > highScore) {
+    highScore = score;
+  }
   textSize(20);
-  text("Score", width / 2 , 300);
-  text(score, width / 2, 330);
-  text("Highest Score", width / 2 , 390);
-  text(highScore, width / 2, 420);
+  text("Score", 400, 300);
+  text(score, 400, 330);
+  text("Highest Score", 400 , 390);
+  text(highScore, 400, 420);
 
   muncherX = 400;
   muncherY = 550;
@@ -318,10 +305,41 @@ function resultScreen() {
   ballVelocityY = - 4;
   ballVelocityX = 2;
 
-
   //Update high score
    if (score > highScore) {
     highScore = score;
+  }
+}
+
+function mousePressed() {if (gameState === 'start') {
+  //Restart to original position
+  muncherX = 400;
+  muncherY = 550;
+  ballVelocityY = -4; 
+  ballVelocityX = 2; 
+  lives = 3; 
+  score = 0; 
+  gameState = 'game';
+} else if(gameState === "result") {
+  //Restart to original position
+  muncherX = 400;
+  muncherY = 550;
+  ballVelocityY = -4; 
+  ballVelocityX = 2; 
+  lives = 3; 
+  score = 0; 
+    gameState = "game";
+    score = 0;
+    lives = 3;
+    bricks = [];
+    for (let i = 0; i < 18; i++) {
+      const bricksX = 0 + i * (45 + 2);
+      for (let j = 0; j < 6; j++) {
+        const bricksY = 100 + j * (15 + 2);
+        const newBrick = new Brick(bricksX, bricksY, 45, 15);
+        bricks.push(newBrick);
+      }
+    }
   }
 }
 
@@ -349,5 +367,11 @@ function mousePressed() {
 
 
 
-//REFERENCES
-//Bounces: https://editor.p5js.org/icm/sketches/BJKWv5Tn
+/* REFERENCES
+Bounces: 
+https://editor.p5js.org/icm/sketches/BJKWv5Tn
+https://chatgpt.com/share/67522468-cee8-8013-bcb0-099d1adee475
+
+//Speed
+https://chatgpt.com/share/675252bb-7284-8013-af9e-0b68c2b5c53b
+*/
