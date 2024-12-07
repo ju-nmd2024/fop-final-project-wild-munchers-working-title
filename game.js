@@ -1,3 +1,7 @@
+/* GROUP 28
+HENRIK TA
+NATASHA LAZABALLETT*/
+
 let red;
 let gameState = 'start';
 
@@ -11,12 +15,12 @@ let lives = 3;
 
 //Paddle variables
 let paddleX = 350;
-let paddleY = 570;
+let paddleY = 680;
 let paddleWidth = 225;
-let paddleHeight =10;
+let paddleHeight = 10;
 
 //Ball position variables
-const bottomLimit = 580;
+const bottomLimit = 590;
 let ballVelocityY = -2;
 let ballVelocityX = 2;
 let muncherX = 400;
@@ -55,6 +59,7 @@ function setup() {
   red = color(255, 55, 31);
   red2 = color(25, 155, 31);
   muncher = new MuncherBall(400, 550, 0);
+  paddle = new Paddle(350,570,225,10);
 
   //wall of bricks
   for (let i = 0; i < 18; i++) {
@@ -139,14 +144,24 @@ class MuncherBall {
 
 let muncher; 
 
-function paddle(){
+class Paddle{
+  constructor(paddleX,paddleY,paddleWidth,paddleHeight){
+    this.paddleX = paddleX;
+    this.paddleY = paddleY;
+    this.paddleWidth = paddleWidth;
+    this.paddleHeight = paddleHeight;
+  }
+
+  draw(){
   push();
   stroke(0);
   strokeWeight(0.5);
   fill(50,60,170);
-  rect(paddleX, paddleY, paddleWidth, paddleHeight);
+  rect(this.paddleX, this.paddleY, this.paddleWidth, this.paddleHeight);
   pop();
+  }
 }
+let paddle;
 
 function draw() {
   if (gameState === 'start') {
@@ -172,7 +187,7 @@ stroke(red2);
 strokeWeight(3);
 fill(red);
 textSize(25);
-text('BRICK MUNCHER', 280, 300, 380);
+text('BRICK MUNCHER', 350, 300, 380);
 pop();
 
 }
@@ -181,31 +196,31 @@ function gameScreen() {
   background(120,120,120);
 
   muncher.display();
-  paddle();
+  paddle.draw();
 
   stroke(0);
   textSize(20);
   fill(255);
   text("Lives:", 30, 30); 
-  text(lives, 75, 30); 
+  text(lives, 90, 30); 
 
-  text("Score:", 165, 30); 
+  text("Score:", 145, 30); 
   text(score, 210, 30); 
 
   text("Highest Score:", 360, 30); 
-  text(highScore, 445, 30); 
+  text(highScore, 500, 30); 
 
 
   if (keyIsDown(LEFT_ARROW)){
-    paddleX -= 4.5; //Moves to the left
+    paddle.paddleX -= 4.5; //Moves to the left
   }
 
   if (keyIsDown(RIGHT_ARROW)) {
-    paddleX += 4.5; //Moves to the right
+    paddle.paddleX += 4.5; //Moves to the right
   }
 
   //limits the paddle to the borders
-  paddleX = constrain(paddleX, 0, 630);
+  paddle.paddleX = constrain(paddle.paddleX, 0, 630);
 
   //Bounces(screen)
   if(muncher.x >= 830 || muncher.x <= 10){
@@ -222,9 +237,9 @@ function gameScreen() {
 
   //Bounces(paddle)
 if (
-  muncher.y >= paddleY - 10 && 
-  muncher.x >= paddleX && 
-  muncher.x <= paddleX + paddleWidth 
+  muncher.y >= paddle.paddleY - 10 && 
+  muncher.x >= paddle.paddleX && 
+  muncher.x <= paddle.paddleX + paddle.paddleWidth 
 ) {
   ballVelocityY = - ballVelocityY; 
 }
@@ -246,14 +261,14 @@ for (let i = bricks.length - 1; i >= 0; i--) {
 
     //Bounce the ball depending on the side of the brick it hits
     if (muncher.x < brick.x || muncher.x > brick.x + brick.width) {
-      ballVelocityX = -ballVelocityX; //Reverse X direction
+      ballVelocityX = - ballVelocityX; //Reverse X direction
     } else {
-      ballVelocityY = -ballVelocityY; //Reverse Y direction
+      ballVelocityY = - ballVelocityY; //Reverse Y direction
     }
   }
 }
 
-
+//Ways to lose
 if (muncher.y >= bottomLimit) {
   lives--; //Decrease lives
   if (lives <= 0) {
@@ -262,22 +277,24 @@ if (muncher.y >= bottomLimit) {
   //Reset ball position and velocity after losing a life
   muncher.x = 400;
   muncher.y = 550;
-  ballVelocityY = -4;
-  ballVelocityX = 2;
+  ballVelocityY = - 4;
+  ballVelocityX = 2;}
 }
 
+if (score >= 108){
+  gameState = 'result';
 }
 
   if (keyIsDown(LEFT_ARROW)){
-    paddleX -= 4.5; //Moves to the left
+    paddle.paddleX -= 4.5; //Moves to the left
   }
 
   if (keyIsDown(RIGHT_ARROW)) {
-    paddleX += 4.5; //Moves to the right
+    paddle.paddleX += 4.5; //Moves to the right
   }
 
   //limits the paddle to the borders
-  paddleX = constrain(paddleX, 0, 705);
+  paddle.paddleX = constrain(paddle.paddleX, 0, 705);
 
   muncher.y += ballVelocityY;
 }
@@ -340,28 +357,6 @@ function mousePressed() {if (gameState === 'start') {
         bricks.push(newBrick);
       }
     }
-  }
-}
-
-function mousePressed() {
-  if (gameState === 'start') {
-    //Restart to original position
-    muncherX = 400;
-    muncherY = 550;
-    ballVelocityY = -4; 
-    ballVelocityX = 2; 
-    lives = 3; 
-    score = 0; 
-    gameState = 'game';
-  } else if (gameState === 'result') {
-    //Restart to original position
-    muncherX = 400;
-    muncherY = 550;
-    ballVelocityY = -4; 
-    ballVelocityX = 2; 
-    lives = 3; 
-    score = 0; 
-    gameState = 'start';
   }
 }
 
